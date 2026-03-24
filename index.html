@@ -1,0 +1,1982 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WebQuest | EcoVerde SmartCity · Bases de Datos · 1.º DAM</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Syne:wght@700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #080c14;
+    --surface: #0d1420;
+    --surface2: #111927;
+    --border: rgba(0,200,180,0.15);
+    --accent: #00c8b4;
+    --accent2: #3b82f6;
+    --accent3: #f59e0b;
+    --green: #22c55e;
+    --text: #e2e8f0;
+    --muted: #94a3b8;
+    --subtle: #1e2d40;
+    --glow: 0 0 40px rgba(0,200,180,0.2);
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'Space Grotesk', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.7;
+    overflow-x: hidden;
+  }
+
+  /* ── SCROLLBAR ── */
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: var(--bg); }
+  ::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 3px; }
+
+  /* ── NAV ── */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    background: rgba(8,12,20,0.92);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+    padding: 0 2rem;
+    display: flex; align-items: center; justify-content: space-between;
+    height: 60px;
+  }
+
+  .nav-brand {
+    font-family: 'Syne', sans-serif;
+    font-size: 0.95rem;
+    color: var(--accent);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+
+  .nav-links {
+    display: flex; gap: 0.25rem; list-style: none;
+  }
+
+  .nav-links a {
+    display: block;
+    padding: 0.4rem 0.85rem;
+    font-size: 0.78rem;
+    font-weight: 500;
+    color: var(--muted);
+    text-decoration: none;
+    border-radius: 6px;
+    transition: all 0.2s;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+
+  .nav-links a:hover {
+    color: var(--accent);
+    background: rgba(0,200,180,0.08);
+  }
+
+  /* ── HERO ── */
+  .hero {
+    min-height: 100vh;
+    display: flex; align-items: center;
+    position: relative;
+    overflow: hidden;
+    padding-top: 60px;
+  }
+
+  .hero-bg {
+    position: absolute; inset: 0;
+    background:
+      radial-gradient(ellipse 80% 60% at 60% 40%, rgba(0,200,180,0.08) 0%, transparent 60%),
+      radial-gradient(ellipse 50% 50% at 20% 80%, rgba(59,130,246,0.07) 0%, transparent 50%),
+      url('https://images.unsplash.com/photo-1480714378408-67cf0d13bc1b?w=1600&q=80') center/cover no-repeat;
+  }
+
+  .hero-bg::after {
+    content: '';
+    position: absolute; inset: 0;
+    background: linear-gradient(to bottom, rgba(8,12,20,0.75) 0%, rgba(8,12,20,0.55) 50%, var(--bg) 100%);
+  }
+
+  .hero-grid {
+    position: absolute; inset: 0;
+    background-image:
+      linear-gradient(rgba(0,200,180,0.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0,200,180,0.04) 1px, transparent 1px);
+    background-size: 50px 50px;
+  }
+
+  .hero-content {
+    position: relative; z-index: 2;
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 4rem 2rem 6rem;
+  }
+
+  .hero-badge {
+    display: inline-flex; align-items: center; gap: 0.5rem;
+    background: rgba(0,200,180,0.1);
+    border: 1px solid rgba(0,200,180,0.3);
+    border-radius: 100px;
+    padding: 0.35rem 1rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--accent);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-bottom: 1.5rem;
+    animation: fadeUp 0.6s ease both;
+  }
+
+  .hero-badge::before {
+    content: '';
+    width: 7px; height: 7px;
+    background: var(--accent);
+    border-radius: 50%;
+    animation: pulse 2s infinite;
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.5; transform: scale(0.8); }
+  }
+
+  .hero-title {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(2.8rem, 7vw, 5.5rem);
+    font-weight: 800;
+    line-height: 1.05;
+    margin-bottom: 1rem;
+    animation: fadeUp 0.6s 0.1s ease both;
+  }
+
+  .hero-title .line2 {
+    display: block;
+    background: linear-gradient(135deg, var(--accent) 0%, #3b82f6 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .hero-sub {
+    font-size: 1.2rem;
+    color: var(--muted);
+    max-width: 600px;
+    margin-bottom: 2.5rem;
+    animation: fadeUp 0.6s 0.2s ease both;
+  }
+
+  .hero-meta {
+    display: flex; flex-wrap: wrap; gap: 1rem;
+    animation: fadeUp 0.6s 0.3s ease both;
+  }
+
+  .meta-chip {
+    display: flex; align-items: center; gap: 0.5rem;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 0.5rem 1rem;
+    font-size: 0.82rem;
+    color: var(--muted);
+  }
+
+  .meta-chip .icon { font-size: 1rem; }
+  .meta-chip strong { color: var(--text); }
+
+  .hero-scroll {
+    position: absolute; bottom: 3rem; left: 50%; transform: translateX(-50%);
+    z-index: 2;
+    display: flex; flex-direction: column; align-items: center; gap: 0.5rem;
+    color: var(--muted); font-size: 0.72rem; letter-spacing: 0.1em;
+    text-transform: uppercase;
+    animation: fadeIn 1s 1s ease both;
+  }
+
+  .scroll-line {
+    width: 1px; height: 40px;
+    background: linear-gradient(to bottom, var(--accent), transparent);
+    animation: scrollAnim 2s infinite;
+  }
+
+  @keyframes scrollAnim {
+    0% { transform: scaleY(0); transform-origin: top; }
+    50% { transform: scaleY(1); transform-origin: top; }
+    51% { transform: scaleY(1); transform-origin: bottom; }
+    100% { transform: scaleY(0); transform-origin: bottom; }
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; } to { opacity: 1; }
+  }
+
+  /* ── LAYOUT ── */
+  .section {
+    padding: 5rem 2rem;
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+
+  .section-divider {
+    height: 1px;
+    background: linear-gradient(to right, transparent, var(--border), transparent);
+    margin: 0 2rem;
+  }
+
+  .section-label {
+    display: inline-flex; align-items: center; gap: 0.6rem;
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 1rem;
+  }
+
+  .section-label::before {
+    content: '';
+    width: 24px; height: 2px;
+    background: var(--accent);
+  }
+
+  h2.section-title {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(1.8rem, 4vw, 2.8rem);
+    font-weight: 800;
+    line-height: 1.15;
+    margin-bottom: 1.5rem;
+    color: var(--text);
+  }
+
+  h2.section-title .accent { color: var(--accent); }
+
+  p { color: var(--muted); margin-bottom: 1rem; }
+  p:last-child { margin-bottom: 0; }
+  strong { color: var(--text); }
+
+  /* ── CARD ── */
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 2rem;
+    transition: border-color 0.3s, transform 0.3s;
+  }
+
+  .card:hover {
+    border-color: rgba(0,200,180,0.35);
+    transform: translateY(-2px);
+  }
+
+  /* ── INTRODUCCIÓN ── */
+  .intro-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+    margin-bottom: 3rem;
+  }
+
+  .intro-image-block {
+    border-radius: 16px;
+    overflow: hidden;
+    position: relative;
+    min-height: 320px;
+  }
+
+  .intro-image-block img {
+    width: 100%; height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  .intro-image-block::after {
+    content: '';
+    position: absolute; inset: 0;
+    background: linear-gradient(135deg, rgba(0,200,180,0.15), rgba(59,130,246,0.1));
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    pointer-events: none;
+  }
+
+  .scenario-box {
+    background: linear-gradient(135deg, rgba(0,200,180,0.07), rgba(59,130,246,0.05));
+    border: 1px solid rgba(0,200,180,0.25);
+    border-radius: 16px;
+    padding: 2rem;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .scenario-box::before {
+    content: '€180.000';
+    position: absolute; right: -10px; bottom: -20px;
+    font-family: 'Syne', sans-serif;
+    font-size: 5rem;
+    font-weight: 800;
+    color: rgba(0,200,180,0.06);
+    pointer-events: none;
+    white-space: nowrap;
+  }
+
+  .scenario-box h3 {
+    font-family: 'Syne', sans-serif;
+    font-size: 1.3rem;
+    color: var(--accent);
+    margin-bottom: 1rem;
+  }
+
+  .requirements-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+    margin-top: 2rem;
+  }
+
+  .req-item {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1.25rem;
+    display: flex; flex-direction: column; gap: 0.5rem;
+  }
+
+  .req-icon {
+    font-size: 1.5rem;
+    line-height: 1;
+  }
+
+  .req-item p {
+    font-size: 0.82rem;
+    margin: 0;
+    color: var(--muted);
+  }
+
+  .req-item strong {
+    font-size: 0.88rem;
+    color: var(--text);
+  }
+
+  /* ── CONTEXTUALIZACIÓN ── */
+  .context-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 2rem;
+  }
+
+  .context-table td {
+    padding: 0.85rem 1.25rem;
+    font-size: 0.9rem;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .context-table td:first-child {
+    font-weight: 600;
+    color: var(--accent);
+    width: 220px;
+    font-size: 0.8rem;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+
+  .context-table tr:last-child td { border-bottom: none; }
+
+  .context-table-wrap {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    overflow: hidden;
+  }
+
+  /* ── TAREA ── */
+  .tarea-header {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+    margin-bottom: 2.5rem;
+    align-items: start;
+  }
+
+  .deliverable-list {
+    list-style: none;
+    display: flex; flex-direction: column; gap: 1rem;
+  }
+
+  .deliverable-item {
+    display: flex; gap: 1rem;
+    align-items: flex-start;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1.25rem;
+    transition: border-color 0.2s;
+  }
+
+  .deliverable-item:hover { border-color: rgba(0,200,180,0.3); }
+
+  .deliverable-num {
+    flex-shrink: 0;
+    width: 32px; height: 32px;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.8rem;
+    font-weight: 500;
+    color: #000;
+  }
+
+  .deliverable-content strong {
+    display: block;
+    font-size: 0.92rem;
+    margin-bottom: 0.25rem;
+    color: var(--text);
+  }
+
+  .deliverable-content p {
+    font-size: 0.82rem;
+    margin: 0;
+  }
+
+  .constraints-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    margin-top: 2rem;
+  }
+
+  .constraint-item {
+    display: flex; gap: 0.75rem;
+    background: rgba(245,158,11,0.06);
+    border: 1px solid rgba(245,158,11,0.2);
+    border-radius: 10px;
+    padding: 1rem;
+    font-size: 0.83rem;
+    color: var(--muted);
+    align-items: flex-start;
+  }
+
+  .constraint-item .constraint-icon {
+    font-size: 1.1rem;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+
+  /* ── PROCESO ── */
+  .roles-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+    margin-bottom: 3rem;
+  }
+
+  .role-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 1.5rem;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .role-card::before {
+    content: '';
+    position: absolute; top: 0; left: 0; right: 0; height: 3px;
+  }
+
+  .role-card.r1::before { background: linear-gradient(90deg, #00c8b4, #3b82f6); }
+  .role-card.r2::before { background: linear-gradient(90deg, #3b82f6, #8b5cf6); }
+  .role-card.r3::before { background: linear-gradient(90deg, #f59e0b, #ef4444); }
+  .role-card.r4::before { background: linear-gradient(90deg, #22c55e, #00c8b4); }
+
+  .role-icon {
+    font-size: 2rem;
+    margin-bottom: 0.75rem;
+    display: block;
+  }
+
+  .role-card h4 {
+    font-family: 'Syne', sans-serif;
+    font-size: 1rem;
+    color: var(--text);
+    margin-bottom: 0.5rem;
+  }
+
+  .role-card p {
+    font-size: 0.82rem;
+    margin: 0;
+  }
+
+  /* Session timeline */
+  .sessions-timeline {
+    position: relative;
+    padding-left: 2.5rem;
+  }
+
+  .sessions-timeline::before {
+    content: '';
+    position: absolute; left: 14px; top: 0; bottom: 0;
+    width: 2px;
+    background: linear-gradient(to bottom, var(--accent), rgba(0,200,180,0.1));
+  }
+
+  .session-item {
+    position: relative;
+    margin-bottom: 2.5rem;
+  }
+
+  .session-item:last-child { margin-bottom: 0; }
+
+  .session-dot {
+    position: absolute; left: -2.5rem;
+    width: 30px; height: 30px;
+    background: var(--bg);
+    border: 2px solid var(--accent);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.72rem;
+    font-weight: 500;
+    color: var(--accent);
+    top: 4px;
+  }
+
+  .session-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    overflow: hidden;
+    transition: border-color 0.2s;
+  }
+
+  .session-card:hover { border-color: rgba(0,200,180,0.3); }
+
+  .session-header {
+    display: flex; align-items: center; gap: 1rem;
+    padding: 1.25rem 1.5rem;
+    border-bottom: 1px solid var(--border);
+    background: var(--surface2);
+    cursor: pointer;
+  }
+
+  .session-number {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.75rem;
+    color: var(--accent);
+    background: rgba(0,200,180,0.1);
+    padding: 0.2rem 0.6rem;
+    border-radius: 4px;
+    white-space: nowrap;
+  }
+
+  .session-header h3 {
+    font-family: 'Syne', sans-serif;
+    font-size: 1rem;
+    color: var(--text);
+    flex: 1;
+  }
+
+  .session-duration {
+    font-size: 0.78rem;
+    color: var(--muted);
+    white-space: nowrap;
+  }
+
+  .session-body {
+    padding: 1.5rem;
+  }
+
+  .activities-list {
+    list-style: none;
+    display: flex; flex-direction: column; gap: 0.6rem;
+  }
+
+  .activities-list li {
+    display: flex; gap: 0.75rem;
+    font-size: 0.84rem;
+    color: var(--muted);
+    align-items: flex-start;
+    padding: 0.4rem 0;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+  }
+
+  .activities-list li:last-child { border-bottom: none; }
+
+  .activity-num {
+    flex-shrink: 0;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.72rem;
+    color: var(--accent);
+    margin-top: 2px;
+    opacity: 0.8;
+  }
+
+  .entregable-tag {
+    display: inline-flex; align-items: center; gap: 0.4rem;
+    background: linear-gradient(135deg, rgba(0,200,180,0.15), rgba(59,130,246,0.1));
+    border: 1px solid rgba(0,200,180,0.3);
+    border-radius: 6px;
+    padding: 0.4rem 0.85rem;
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: var(--accent);
+    margin-top: 1.25rem;
+  }
+
+  .entregable-tag::before { content: '📦'; }
+
+  /* ── RECURSOS ── */
+  .resources-tabs {
+    display: flex; gap: 0.5rem;
+    margin-bottom: 2rem;
+    flex-wrap: wrap;
+  }
+
+  .res-tab {
+    padding: 0.5rem 1.2rem;
+    border-radius: 8px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    border: 1px solid var(--border);
+    background: transparent;
+    color: var(--muted);
+    cursor: pointer;
+    transition: all 0.2s;
+    letter-spacing: 0.03em;
+  }
+
+  .res-tab.active, .res-tab:hover {
+    background: rgba(0,200,180,0.1);
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+
+  .resource-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 1rem;
+  }
+
+  .resource-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 1.5rem;
+    display: flex; flex-direction: column; gap: 0.75rem;
+    transition: all 0.2s;
+    text-decoration: none;
+  }
+
+  .resource-card:hover {
+    border-color: rgba(0,200,180,0.3);
+    transform: translateY(-2px);
+    box-shadow: var(--glow);
+  }
+
+  .resource-card-header {
+    display: flex; align-items: flex-start; gap: 0.75rem;
+  }
+
+  .resource-type-badge {
+    flex-shrink: 0;
+    padding: 0.2rem 0.6rem;
+    border-radius: 4px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.68rem;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .badge-obligatorio {
+    background: rgba(239,68,68,0.15);
+    color: #f87171;
+    border: 1px solid rgba(239,68,68,0.3);
+  }
+
+  .badge-herramienta {
+    background: rgba(59,130,246,0.15);
+    color: #93c5fd;
+    border: 1px solid rgba(59,130,246,0.3);
+  }
+
+  .badge-ampliacion {
+    background: rgba(34,197,94,0.1);
+    color: #86efac;
+    border: 1px solid rgba(34,197,94,0.25);
+  }
+
+  .resource-card h4 {
+    font-size: 0.92rem;
+    font-weight: 600;
+    color: var(--text);
+    line-height: 1.3;
+  }
+
+  .resource-card p {
+    font-size: 0.8rem;
+    color: var(--muted);
+    margin: 0;
+    line-height: 1.5;
+  }
+
+  .resource-url {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.72rem;
+    color: var(--accent);
+    opacity: 0.7;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .docente-resources {
+    margin-top: 2rem;
+    background: linear-gradient(135deg, rgba(59,130,246,0.07), rgba(0,200,180,0.05));
+    border: 1px solid rgba(59,130,246,0.2);
+    border-radius: 16px;
+    padding: 2rem;
+  }
+
+  .docente-resources h3 {
+    font-family: 'Syne', sans-serif;
+    font-size: 1.1rem;
+    color: var(--accent2);
+    margin-bottom: 1.25rem;
+    display: flex; align-items: center; gap: 0.6rem;
+  }
+
+  .docente-list {
+    list-style: none;
+    display: flex; flex-direction: column; gap: 0.6rem;
+  }
+
+  .docente-list li {
+    display: flex; gap: 0.75rem;
+    font-size: 0.85rem;
+    color: var(--muted);
+    align-items: flex-start;
+  }
+
+  .docente-list li::before {
+    content: '→';
+    color: var(--accent2);
+    flex-shrink: 0;
+    font-weight: bold;
+  }
+
+  /* ── EVALUACIÓN ── */
+  .eval-weights {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 1rem;
+    margin-bottom: 3rem;
+  }
+
+  .weight-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 1.5rem 1rem;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .weight-percent {
+    font-family: 'Syne', sans-serif;
+    font-size: 2.2rem;
+    font-weight: 800;
+    line-height: 1;
+    margin-bottom: 0.5rem;
+  }
+
+  .weight-card:nth-child(1) .weight-percent { color: var(--accent); }
+  .weight-card:nth-child(2) .weight-percent { color: var(--accent2); }
+  .weight-card:nth-child(3) .weight-percent { color: var(--accent3); }
+  .weight-card:nth-child(4) .weight-percent { color: #a78bfa; }
+  .weight-card:nth-child(5) .weight-percent { color: var(--green); }
+
+  .weight-bar {
+    position: absolute; bottom: 0; left: 0;
+    height: 3px;
+    border-radius: 0;
+  }
+
+  .weight-card:nth-child(1) .weight-bar { background: var(--accent); }
+  .weight-card:nth-child(2) .weight-bar { background: var(--accent2); }
+  .weight-card:nth-child(3) .weight-bar { background: var(--accent3); }
+  .weight-card:nth-child(4) .weight-bar { background: #a78bfa; }
+  .weight-card:nth-child(5) .weight-bar { background: var(--green); }
+
+  .weight-label {
+    font-size: 0.75rem;
+    color: var(--muted);
+    line-height: 1.3;
+  }
+
+  /* Rúbrica */
+  .rubric-section { margin-bottom: 3rem; }
+
+  .rubric-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 1.1rem;
+    color: var(--text);
+    margin-bottom: 1.5rem;
+    display: flex; align-items: center; gap: 0.75rem;
+  }
+
+  .rubric-title::after {
+    content: '';
+    flex: 1; height: 1px;
+    background: var(--border);
+  }
+
+  .rubric-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.82rem;
+  }
+
+  .rubric-table th {
+    padding: 0.75rem 1rem;
+    text-align: left;
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .rubric-table th:first-child { color: var(--muted); }
+  .rubric-table th:nth-child(2) { color: var(--accent); }
+  .rubric-table th:nth-child(3) { color: var(--accent2); }
+  .rubric-table th:nth-child(4) { color: var(--accent3); }
+  .rubric-table th:nth-child(5) { color: #ef4444; }
+
+  .rubric-table td {
+    padding: 1rem;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+    vertical-align: top;
+    color: var(--muted);
+    line-height: 1.5;
+  }
+
+  .rubric-table td:first-child {
+    font-weight: 600;
+    color: var(--text);
+    font-size: 0.84rem;
+    white-space: nowrap;
+  }
+
+  .rubric-table tr:last-child td { border-bottom: none; }
+
+  .rubric-wrap {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    overflow: hidden;
+    overflow-x: auto;
+  }
+
+  /* ── CONCLUSIÓN ── */
+  .roles-futures {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+    margin: 2rem 0;
+  }
+
+  .future-role {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1.25rem;
+    display: flex; gap: 0.75rem; align-items: flex-start;
+  }
+
+  .future-role .role-emoji { font-size: 1.5rem; flex-shrink: 0; }
+
+  .future-role h4 {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--text);
+    margin-bottom: 0.25rem;
+  }
+
+  .future-role p { font-size: 0.8rem; margin: 0; }
+
+  .reflection-block {
+    background: linear-gradient(135deg, rgba(0,200,180,0.06), rgba(59,130,246,0.04));
+    border: 1px solid rgba(0,200,180,0.2);
+    border-radius: 16px;
+    padding: 2rem;
+    margin-top: 2rem;
+  }
+
+  .reflection-block h3 {
+    font-family: 'Syne', sans-serif;
+    font-size: 1rem;
+    color: var(--accent);
+    margin-bottom: 1rem;
+  }
+
+  .reflection-questions {
+    list-style: none;
+    display: flex; flex-direction: column; gap: 0.75rem;
+  }
+
+  .reflection-questions li {
+    display: flex; gap: 0.75rem;
+    font-size: 0.85rem;
+    color: var(--muted);
+    align-items: flex-start;
+    padding: 0.75rem;
+    background: rgba(255,255,255,0.02);
+    border-radius: 8px;
+  }
+
+  .q-icon {
+    font-size: 1rem;
+    flex-shrink: 0;
+  }
+
+  .quote-finale {
+    margin-top: 3rem;
+    text-align: center;
+    padding: 3rem 2rem;
+    border-top: 1px solid var(--border);
+  }
+
+  .quote-finale blockquote {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(1.3rem, 3vw, 2rem);
+    font-weight: 700;
+    color: var(--text);
+    max-width: 800px;
+    margin: 0 auto 1rem;
+    line-height: 1.3;
+  }
+
+  .quote-finale blockquote .accent { color: var(--accent); }
+  .quote-finale cite { color: var(--muted); font-size: 0.85rem; font-style: italic; }
+
+  /* ── FOOTER ── */
+  footer {
+    background: var(--surface);
+    border-top: 1px solid var(--border);
+    padding: 2rem;
+    text-align: center;
+  }
+
+  .footer-content {
+    max-width: 1100px;
+    margin: 0 auto;
+    display: flex; align-items: center; justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+
+  .footer-content p {
+    font-size: 0.8rem;
+    margin: 0;
+  }
+
+  .footer-tags {
+    display: flex; gap: 0.5rem; flex-wrap: wrap;
+  }
+
+  .footer-tag {
+    padding: 0.25rem 0.75rem;
+    background: rgba(0,200,180,0.08);
+    border: 1px solid rgba(0,200,180,0.15);
+    border-radius: 100px;
+    font-size: 0.72rem;
+    color: var(--accent);
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  /* ── SECTION BG VARIANTS ── */
+  .section-alt {
+    background: var(--surface2);
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .section-alt .section { /* inherits */ }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 900px) {
+    .intro-grid, .tarea-header, .requirements-grid { grid-template-columns: 1fr; }
+    .constraints-grid { grid-template-columns: 1fr; }
+    .eval-weights { grid-template-columns: repeat(3, 1fr); }
+    .roles-grid, .roles-futures { grid-template-columns: 1fr; }
+    .nav-links { display: none; }
+  }
+
+  @media (max-width: 600px) {
+    .eval-weights { grid-template-columns: 1fr 1fr; }
+    .resource-cards { grid-template-columns: 1fr; }
+  }
+
+  /* ── HIGHLIGHT CODE ── */
+  code {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.82em;
+    background: rgba(0,200,180,0.1);
+    color: var(--accent);
+    padding: 0.15em 0.45em;
+    border-radius: 4px;
+  }
+
+  /* ── PROGRESS INDICATOR ── */
+  .progress-bar {
+    position: fixed; top: 60px; left: 0; right: 0; z-index: 99;
+    height: 2px;
+    background: transparent;
+  }
+
+  .progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--accent), var(--accent2));
+    width: 0%;
+    transition: width 0.1s;
+  }
+
+  /* ── ALERT BOX ── */
+  .alert {
+    display: flex; gap: 0.75rem;
+    background: rgba(239,68,68,0.08);
+    border: 1px solid rgba(239,68,68,0.25);
+    border-radius: 10px;
+    padding: 1rem 1.25rem;
+    font-size: 0.84rem;
+    color: #fca5a5;
+    margin-top: 1.5rem;
+    align-items: flex-start;
+  }
+
+  .alert-icon { font-size: 1.1rem; flex-shrink: 0; }
+
+  /* ── SECTION INTRO IMAGE ── */
+  .full-image-section {
+    width: 100%;
+    max-height: 420px;
+    overflow: hidden;
+    position: relative;
+  }
+
+  .full-image-section img {
+    width: 100%;
+    height: 420px;
+    object-fit: cover;
+    display: block;
+    opacity: 0.55;
+  }
+
+  .full-image-section::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: linear-gradient(to right, var(--bg) 0%, transparent 30%, transparent 70%, var(--bg) 100%),
+                linear-gradient(to bottom, var(--bg) 0%, transparent 20%, transparent 80%, var(--bg) 100%);
+    z-index: 1;
+  }
+</style>
+</head>
+<body>
+
+<!-- PROGRESS BAR -->
+<div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-brand">⚡ WebQuest · Bases de Datos</div>
+  <ul class="nav-links">
+    <li><a href="#introduccion">Intro</a></li>
+    <li><a href="#tarea">Tarea</a></li>
+    <li><a href="#proceso">Proceso</a></li>
+    <li><a href="#recursos">Recursos</a></li>
+    <li><a href="#evaluacion">Evaluación</a></li>
+    <li><a href="#conclusion">Conclusión</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-grid"></div>
+  <div class="hero-content">
+    <div class="hero-badge">WebQuest · 1.º DAM · 2025–2026</div>
+    <h1 class="hero-title">
+      DataLab Solutions<br>
+      <span class="line2">EcoVerde SmartCity</span>
+    </h1>
+    <p class="hero-sub">
+      Diseña e implementa la base de datos de la primera ciudad inteligente de España.
+      Proyecto real. El reloj ya ha comenzado.
+    </p>
+    <div class="hero-meta">
+      <div class="meta-chip"><span class="icon">🎓</span> <span>Ciclo <strong>DAM · 1.º Curso</strong></span></div>
+      <div class="meta-chip"><span class="icon">🗄️</span> <span>Módulo <strong>Bases de Datos</strong></span></div>
+      <div class="meta-chip"><span class="icon">⏱️</span> <span><strong>5 sesiones</strong> × 2 horas</span></div>
+      <div class="meta-chip"><span class="icon">👥</span> <span>Grupos de <strong>3–4 alumnos</strong></span></div>
+      <div class="meta-chip"><span class="icon">🛢️</span> <span>Tecnología <strong>MySQL 8.0</strong></span></div>
+    </div>
+  </div>
+  <div class="hero-scroll">
+    Scroll
+    <div class="scroll-line"></div>
+  </div>
+</section>
+
+<!-- CONTEXTUALIZACIÓN -->
+<div class="section-alt">
+  <div class="section">
+    <div class="section-label">Ficha técnica</div>
+    <h2 class="section-title">Contextualización <span class="accent">del módulo</span></h2>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:2rem;align-items:start">
+      <div class="context-table-wrap">
+        <table class="context-table">
+          <tr><td>Ciclo Formativo</td><td><strong>Técnico Superior en DAM</strong></td></tr>
+          <tr><td>Asignatura</td><td><strong>Bases de Datos</strong></td></tr>
+          <tr><td>Curso</td><td><strong>1.º DAM</strong></td></tr>
+          <tr><td>Año académico</td><td><strong>2025–2026</strong></td></tr>
+          <tr><td>Marco normativo</td><td>Real Decreto 450/2010</td></tr>
+          <tr><td>Metodología</td><td>WebQuest · PBL</td></tr>
+          <tr><td>Herramienta principal</td><td><code>MySQL 8.0</code></td></tr>
+          <tr><td>Duración</td><td>5 sesiones × 2h = <strong>10 horas</strong></td></tr>
+        </table>
+      </div>
+      <div>
+        <p>Esta WebQuest se encuadra en el módulo profesional <strong>Bases de Datos</strong> del ciclo de Desarrollo de Aplicaciones Multiplataforma. Los contenidos trabajados corresponden íntegramente con los establecidos en el <strong>Real Decreto 450/2010</strong>.</p>
+        <p>El enfoque es <strong>eminentemente práctico y orientado a la empleabilidad</strong>: los resultados de aprendizaje (RA) guiarán todo el proceso, garantizando que los conocimientos adquiridos sean directamente transferibles al entorno profesional del desarrollo de software.</p>
+        <div style="display:flex;flex-wrap:wrap;gap:0.5rem;margin-top:1rem">
+          <span style="background:rgba(0,200,180,0.1);border:1px solid rgba(0,200,180,0.25);border-radius:6px;padding:0.25rem 0.75rem;font-size:0.78rem;color:var(--accent)">RA 2 · Diseño E-R</span>
+          <span style="background:rgba(59,130,246,0.1);border:1px solid rgba(59,130,246,0.25);border-radius:6px;padding:0.25rem 0.75rem;font-size:0.78rem;color:#93c5fd">RA 3 · SQL DDL</span>
+          <span style="background:rgba(245,158,11,0.1);border:1px solid rgba(245,158,11,0.25);border-radius:6px;padding:0.25rem 0.75rem;font-size:0.78rem;color:var(--accent3)">RA 4 · Consultas DQL</span>
+          <span style="background:rgba(168,85,247,0.1);border:1px solid rgba(168,85,247,0.25);border-radius:6px;padding:0.25rem 0.75rem;font-size:0.78rem;color:#c4b5fd">RA 5 · Programación</span>
+          <span style="background:rgba(34,197,94,0.1);border:1px solid rgba(34,197,94,0.25);border-radius:6px;padding:0.25rem 0.75rem;font-size:0.78rem;color:var(--green)">RA 6 · Administración</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- IMAGEN CIUDAD -->
+<div class="full-image-section">
+  <img src="https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?w=1600&q=80" alt="Ciudad inteligente">
+</div>
+
+<!-- INTRODUCCIÓN -->
+<div id="introduccion">
+<div class="section">
+  <div class="section-label">Sección 01</div>
+  <h2 class="section-title">La <span class="accent">Misión</span></h2>
+
+  <div class="intro-grid">
+    <div>
+      <div class="scenario-box">
+        <h3>🏙️ EcoVerde, Madrid</h3>
+        <p>El Ayuntamiento de Madrid tiene un proyecto ambicioso: convertir un nuevo barrio residencial de <strong>50.000 habitantes</strong> en la primera SmartCity totalmente digitalizada de España.</p>
+        <p style="margin-top:0.75rem">Eres parte de <strong>DataLab Solutions S.L.</strong>, la empresa consultora que ha ganado el concurso público. El Director del Proyecto os convoca: debéis entregar en <strong>tres semanas</strong> el diseño completo de la base de datos y un prototipo funcional.</p>
+      </div>
+      <div class="alert" style="margin-top:1rem">
+        <span class="alert-icon">⚠️</span>
+        <span>El alcalde ha advertido que si el sistema falla durante la inauguración ante los medios nacionales, <strong>la empresa perderá todos los contratos futuros</strong> con el Ayuntamiento.</span>
+      </div>
+    </div>
+    <div class="intro-image-block">
+      <img src="https://images.unsplash.com/photo-1558494949-ef010cbdcc31?w=800&q=80" alt="Servidor de base de datos">
+    </div>
+  </div>
+
+  <h3 style="font-family:'Syne',sans-serif;font-size:1.2rem;color:var(--text);margin-bottom:1.25rem">El sistema debe cumplir simultáneamente:</h3>
+  <div class="requirements-grid">
+    <div class="req-item">
+      <span class="req-icon">🌐</span>
+      <strong>Integración total</strong>
+      <p>Ciudadanos, sensores IoT, vehículos, edificios, comercios y servicios públicos en una sola base de datos.</p>
+    </div>
+    <div class="req-item">
+      <span class="req-icon">📐</span>
+      <strong>Normalización 3FN</strong>
+      <p>Diseño completamente normalizado hasta Tercera Forma Normal para garantizar la coherencia de datos.</p>
+    </div>
+    <div class="req-item">
+      <span class="req-icon">⚡</span>
+      <strong>&lt; 100 ms</strong>
+      <p>Las consultas del panel del alcalde deben ejecutarse en menos de 100 ms. Demostrado con <code>EXPLAIN ANALYZE</code>.</p>
+    </div>
+    <div class="req-item">
+      <span class="req-icon">⚙️</span>
+      <strong>Automatización</strong>
+      <p>Procedimientos almacenados y triggers que automaticen las operaciones críticas del sistema.</p>
+    </div>
+    <div class="req-item">
+      <span class="req-icon">🔒</span>
+      <strong>LOPDGDD</strong>
+      <p>Cumplimiento legal en el tratamiento de datos personales de los 50.000 ciudadanos del barrio.</p>
+    </div>
+    <div class="req-item">
+      <span class="req-icon">💰</span>
+      <strong>Budget 2.000 €</strong>
+      <p>MySQL 8.0 Community Edition (gratuito). Máximo 2.000 € en herramientas. Justificación obligatoria.</p>
+    </div>
+  </div>
+</div>
+</div>
+
+<div class="section-divider"></div>
+
+<!-- TAREA -->
+<div id="tarea" class="section-alt">
+<div class="section">
+  <div class="section-label">Sección 02</div>
+  <h2 class="section-title">La <span class="accent">Tarea</span></h2>
+
+  <div class="tarea-header">
+    <div>
+      <p>Tu equipo (<strong>grupos de 3–4 alumnos</strong>) asumirá el rol del equipo técnico de <strong>DataLab Solutions S.L.</strong> encargado de diseñar e implantar la base de datos de EcoVerde.</p>
+      <p>El producto final es un <strong>Expediente Técnico de Base de Datos (ETBD)</strong> completo, acompañado de un esquema SQL funcional y ejecutable en MySQL 8.0, junto a una <strong>demostración en vivo</strong> ante el «Comité Técnico Municipal».</p>
+    </div>
+    <div class="intro-image-block" style="min-height:200px">
+      <img src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=800&q=80" alt="Dashboard análisis de datos">
+    </div>
+  </div>
+
+  <h3 style="font-family:'Syne',sans-serif;font-size:1.15rem;color:var(--text);margin-bottom:1.25rem">📋 Entregable Principal: ETBD — 8 apartados obligatorios</h3>
+
+  <ul class="deliverable-list">
+    <li class="deliverable-item">
+      <div class="deliverable-num">01</div>
+      <div class="deliverable-content">
+        <strong>Análisis de Requisitos</strong>
+        <p>Identificación de al menos <strong>12 entidades</strong> con sus atributos, relaciones y cardinalidades extraídas del dossier de EcoVerde.</p>
+      </div>
+    </li>
+    <li class="deliverable-item">
+      <div class="deliverable-num">02</div>
+      <div class="deliverable-content">
+        <strong>Diagrama E-R Extendido Completo</strong>
+        <p>Modelado con notación Chen o crow's foot usando <strong>MySQL Workbench</strong> u otra herramienta justificada. Entidades débiles y relaciones ternarias incluidas.</p>
+      </div>
+    </li>
+    <li class="deliverable-item">
+      <div class="deliverable-num">03</div>
+      <div class="deliverable-content">
+        <strong>Modelo Relacional Normalizado</strong>
+        <p>Transformación E-R → modelo relacional con justificación de reglas aplicadas. Verificación de <code>1FN</code>, <code>2FN</code> y <code>3FN</code> en todas las tablas.</p>
+      </div>
+    </li>
+    <li class="deliverable-item">
+      <div class="deliverable-num">04</div>
+      <div class="deliverable-content">
+        <strong>Script SQL Completo (DDL)</strong>
+        <p>Todas las tablas con restricciones, claves primarias y ajenas, índices y al menos <strong>2 vistas optimizadas</strong>. Ejecutable en MySQL 8.0.</p>
+      </div>
+    </li>
+    <li class="deliverable-item">
+      <div class="deliverable-num">05</div>
+      <div class="deliverable-content">
+        <strong>Datos de Prueba (DML)</strong>
+        <p>Inserción de datos realistas en todas las tablas (mínimo <strong>10 filas por tabla principal</strong>): nombres, fechas, coordenadas GPS, lecturas de sensores IoT.</p>
+      </div>
+    </li>
+    <li class="deliverable-item">
+      <div class="deliverable-num">06</div>
+      <div class="deliverable-content">
+        <strong>Catálogo de Consultas SQL (DQL)</strong>
+        <p>Mínimo <strong>8 consultas</strong> que incluyan todos los tipos de JOIN, funciones de agregado, subconsultas y uso de vistas.</p>
+      </div>
+    </li>
+    <li class="deliverable-item">
+      <div class="deliverable-num">07</div>
+      <div class="deliverable-content">
+        <strong>Programación en Servidor</strong>
+        <p>Mínimo <strong>2 procedimientos almacenados + 2 triggers</strong> con documentación completa y casos de prueba (<code>sp_registrar_incidencia</code>, <code>sp_informe_consumo</code>, <code>tr_before_delete_ciudadano</code>, <code>tr_after_insert_sensor</code>).</p>
+      </div>
+    </li>
+    <li class="deliverable-item">
+      <div class="deliverable-num">08</div>
+      <div class="deliverable-content">
+        <strong>Plan de Seguridad de Datos</strong>
+        <p>Gestión de usuarios MySQL con privilegios diferenciados (<code>admin</code>, <code>app_user</code>, <code>read_only</code>) + medidas LOPDGDD para datos de ciudadanos.</p>
+      </div>
+    </li>
+  </ul>
+
+  <h3 style="font-family:'Syne',sans-serif;font-size:1.05rem;color:var(--text);margin:2rem 0 1rem">⛔ Restricciones del Proyecto</h3>
+  <div class="constraints-grid">
+    <div class="constraint-item">
+      <span class="constraint-icon">🛢️</span>
+      <span><strong>Solo MySQL 8.0 Community Edition.</strong> No se permite Oracle, SQL Server ni PostgreSQL. Coste de licencia: 0 €.</span>
+    </div>
+    <div class="constraint-item">
+      <span class="constraint-icon">💳</span>
+      <span><strong>Máximo 2.000 € en herramientas de pago.</strong> MySQL Workbench y DBeaver son gratuitos. Justificación obligatoria para cualquier herramienta de pago.</span>
+    </div>
+    <div class="constraint-item">
+      <span class="constraint-icon">📏</span>
+      <span><strong>Mínimo 3FN obligatoria.</strong> El diseño con tablas en 2FN o inferior no superará el nivel de suficiente.</span>
+    </div>
+    <div class="constraint-item">
+      <span class="constraint-icon">🔐</span>
+      <span><strong>LOPDGDD obligatoria.</strong> Tabla de auditoría de accesos y campo de consentimiento documentado en datos personales de ciudadanos.</span>
+    </div>
+    <div class="constraint-item">
+      <span class="constraint-icon">⚡</span>
+      <span><strong>Panel del alcalde &lt; 100 ms.</strong> Las 3 consultas más frecuentes deben demostrarse con <code>EXPLAIN ANALYZE</code>.</span>
+    </div>
+    <div class="constraint-item">
+      <span class="constraint-icon">📊</span>
+      <span><strong>Mínimo 12 entidades + 20 relaciones + 15 tablas.</strong> Modelo que contemple toda la complejidad de EcoVerde.</span>
+    </div>
+    <div class="constraint-item">
+      <span class="constraint-icon">💬</span>
+      <span><strong>Todo el SQL debe ir comentado</strong> con cabecera (propósito, parámetros, autor) y comentarios de línea en fragmentos complejos.</span>
+    </div>
+    <div class="constraint-item">
+      <span class="constraint-icon">📅</span>
+      <span><strong>5 sesiones de trabajo.</strong> La entrega final es en la sesión 5. No se admiten entregas fuera de plazo salvo causa justificada.</span>
+    </div>
+  </div>
+</div>
+</div>
+
+<div class="section-divider"></div>
+
+<!-- PROCESO -->
+<div id="proceso">
+<div class="section">
+  <div class="section-label">Sección 03</div>
+  <h2 class="section-title">El <span class="accent">Proceso</span></h2>
+  <p>El proceso se estructura en <strong>5 sesiones de 2 horas</strong> cada una. El trabajo se realiza en grupos de 3-4 estudiantes con <strong>roles definidos y rotativos</strong>.</p>
+
+  <!-- Roles -->
+  <h3 style="font-family:'Syne',sans-serif;font-size:1.1rem;color:var(--text);margin:2rem 0 1rem">👥 Distribución de Roles en el Equipo</h3>
+  <div class="roles-grid">
+    <div class="role-card r1">
+      <span class="role-icon">🏗️</span>
+      <h4>Arquitecto/a de Datos</h4>
+      <p>Lidera el diseño conceptual (E-R) y lógico (modelo relacional). Verifica la normalización. Coordina el ETBD.</p>
+    </div>
+    <div class="role-card r2">
+      <span class="role-icon">💻</span>
+      <h4>Desarrollador/a SQL</h4>
+      <p>Escribe y depura todos los scripts SQL (DDL, DML, DQL). Implementa los procedimientos y triggers.</p>
+    </div>
+    <div class="role-card r3">
+      <span class="role-icon">🔒</span>
+      <h4>Analista de Seguridad</h4>
+      <p>Diseña el plan de seguridad (usuarios, privilegios, LOPDGDD). Documenta la auditoría de accesos.</p>
+    </div>
+    <div class="role-card r4">
+      <span class="role-icon">📈</span>
+      <h4>Especialista en Rendimiento</h4>
+      <p>Diseña los índices, analiza planes de ejecución (EXPLAIN) y verifica el cumplimiento del SLA de 100 ms.</p>
+    </div>
+  </div>
+
+  <!-- Timeline Sesiones -->
+  <h3 style="font-family:'Syne',sans-serif;font-size:1.1rem;color:var(--text);margin:2.5rem 0 1.5rem">🗓️ Planificación de las 5 Sesiones</h3>
+  <div class="sessions-timeline">
+
+    <!-- Sesión 1 -->
+    <div class="session-item">
+      <div class="session-dot">S1</div>
+      <div class="session-card">
+        <div class="session-header">
+          <span class="session-number">SESIÓN 01</span>
+          <h3>Análisis de Requisitos y Modelado E-R</h3>
+          <span class="session-duration">⏱ 2 horas</span>
+        </div>
+        <div class="session-body">
+          <p style="margin-bottom:1rem;font-size:0.85rem"><strong>Objetivos:</strong> Comprender los requisitos de EcoVerde · Identificar entidades y relaciones · Construir el diagrama E-R extendido completo.</p>
+          <ul class="activities-list">
+            <li><span class="activity-num">→</span> Lectura y análisis del Dossier de Requisitos de EcoVerde (7 servicios del barrio inteligente).</li>
+            <li><span class="activity-num">→</span> Tormenta de ideas grupal (20 min): propuesta de entidades candidatas, debate y consenso para seleccionar las 12 mínimas obligatorias.</li>
+            <li><span class="activity-num">→</span> Definición de atributos: simples, compuestos, multivaluados y derivados. Identificación de claves primarias.</li>
+            <li><span class="activity-num">→</span> Identificación y documentación de las 20 relaciones: nombre, cardinalidad (1:1, 1:N, N:M) y participación.</li>
+            <li><span class="activity-num">→</span> Diseño del Diagrama E-R extendido en <code>MySQL Workbench</code> o <code>draw.io</code>. Incluir entidades débiles y relaciones ternarias.</li>
+          </ul>
+          <div class="entregable-tag">E1 — Diagrama E-R en PDF + Documento de análisis de requisitos</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Sesión 2 -->
+    <div class="session-item">
+      <div class="session-dot">S2</div>
+      <div class="session-card">
+        <div class="session-header">
+          <span class="session-number">SESIÓN 02</span>
+          <h3>Modelo Relacional y Normalización</h3>
+          <span class="session-duration">⏱ 2 horas</span>
+        </div>
+        <div class="session-body">
+          <p style="margin-bottom:1rem;font-size:0.85rem"><strong>Objetivos:</strong> Transformar E-R a esquema relacional · Normalizar hasta 3FN · Documentar dependencias funcionales.</p>
+          <ul class="activities-list">
+            <li><span class="activity-num">→</span> Revisión de las reglas de transformación E-R → modelo relacional (entidades fuertes, débiles, relaciones 1:1, 1:N y N:M).</li>
+            <li><span class="activity-num">→</span> Aplicación sistemática: cada integrante aplica las reglas a un subconjunto de entidades y pone en común los resultados.</li>
+            <li><span class="activity-num">→</span> Verificación de <strong>1FN</strong>: eliminación de grupos repetitivos y atributos multivaluados.</li>
+            <li><span class="activity-num">→</span> Verificación de <strong>2FN</strong>: identificación y eliminación de dependencias parciales en tablas con clave compuesta.</li>
+            <li><span class="activity-num">→</span> Verificación de <strong>3FN</strong>: identificación y eliminación de dependencias transitivas.</li>
+            <li><span class="activity-num">→</span> Revisión cruzada entre equipos (15 min): intercambio de modelos para detección de errores de normalización.</li>
+          </ul>
+          <div class="entregable-tag">E2 — Esquema relacional normalizado + Documento de normalización justificado</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Sesión 3 -->
+    <div class="session-item">
+      <div class="session-dot">S3</div>
+      <div class="session-card">
+        <div class="session-header">
+          <span class="session-number">SESIÓN 03</span>
+          <h3>Implementación SQL — DDL, DML y Consultas Básicas</h3>
+          <span class="session-duration">⏱ 2 horas</span>
+        </div>
+        <div class="session-body">
+          <p style="margin-bottom:1rem;font-size:0.85rem"><strong>Objetivos:</strong> Crear el script SQL DDL completo · Poblar la BD con datos realistas · Desarrollar consultas básicas y de resumen.</p>
+          <ul class="activities-list">
+            <li><span class="activity-num">→</span> Configuración del entorno MySQL 8.0: creación del esquema <code>ecoverde_db</code> y usuarios con privilegios diferenciados (<code>admin</code>, <code>app_user</code>, <code>read_only</code>).</li>
+            <li><span class="activity-num">→</span> Codificación del script <strong>DDL</strong>: <code>CREATE TABLE</code> con todas las restricciones (PK, FK, NOT NULL, UNIQUE, CHECK). Convención de nomenclatura acordada.</li>
+            <li><span class="activity-num">→</span> Creación de índices sobre las columnas más frecuentemente consultadas.</li>
+            <li><span class="activity-num">→</span> Creación de al menos <strong>2 vistas (VIEW)</strong> que simplifiquen las consultas más complejas del panel del alcalde.</li>
+            <li><span class="activity-num">→</span> Script <strong>DML</strong> de datos de prueba: mínimo 10 filas en tablas principales con datos coherentes (coordenadas GPS, lecturas de sensores...).</li>
+            <li><span class="activity-num">→</span> Consultas SQL básicas: 2 simples, 2 resumen con <code>GROUP BY/HAVING</code>, 2 JOIN (INNER y LEFT).</li>
+          </ul>
+          <div class="entregable-tag">E3 — Script SQL (DDL + DML) ejecutable + 6 consultas básicas documentadas</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Sesión 4 -->
+    <div class="session-item">
+      <div class="session-dot">S4</div>
+      <div class="session-card">
+        <div class="session-header">
+          <span class="session-number">SESIÓN 04</span>
+          <h3>Consultas Avanzadas, Procedimientos y Triggers</h3>
+          <span class="session-duration">⏱ 2 horas</span>
+        </div>
+        <div class="session-body">
+          <p style="margin-bottom:1rem;font-size:0.85rem"><strong>Objetivos:</strong> Consultas DQL complejas · Implementar procedimientos almacenados y triggers · Verificar rendimiento con <code>EXPLAIN ANALYZE</code>.</p>
+          <ul class="activities-list">
+            <li><span class="activity-num">→</span> Consultas DQL avanzadas: 2 multitabla (3+ tablas), 1 subconsulta correlacionada, 1 no correlacionada.</li>
+            <li><span class="activity-num">→</span> <code>sp_registrar_incidencia(p_tipo, p_descripcion, p_sensor_id)</code> — registra incidencias del sistema e incrementa el contador de alertas.</li>
+            <li><span class="activity-num">→</span> <code>sp_informe_consumo_energetico(p_fecha_ini, p_fecha_fin)</code> — informe de consumo por edificio con estadísticas (max, min, avg).</li>
+            <li><span class="activity-num">→</span> <code>tr_before_delete_ciudadano</code> — antes de borrar un ciudadano, almacena copia en <code>ciudadanos_historico</code>.</li>
+            <li><span class="activity-num">→</span> <code>tr_after_insert_sensor_lectura</code> — actualiza automáticamente <code>ultima_lectura</code> y <code>estado</code> del sensor.</li>
+            <li><span class="activity-num">→</span> Análisis de rendimiento: <code>EXPLAIN ANALYZE</code> sobre las 3 consultas del panel. Ajuste de índices si supera 100 ms.</li>
+          </ul>
+          <div class="entregable-tag">E4 — Scripts SP + Triggers + Informe EXPLAIN (3 consultas) + Catálogo DQL completo</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Sesión 5 -->
+    <div class="session-item">
+      <div class="session-dot">S5</div>
+      <div class="session-card">
+        <div class="session-header" style="border-color:rgba(0,200,180,0.3)">
+          <span class="session-number" style="background:rgba(0,200,180,0.2);color:var(--accent)">SESIÓN 05</span>
+          <h3>Seguridad, LOPDGDD, Revisión Final y Presentación</h3>
+          <span class="session-duration">⏱ 2 horas</span>
+        </div>
+        <div class="session-body">
+          <p style="margin-bottom:1rem;font-size:0.85rem"><strong>Objetivos:</strong> Completar el plan de seguridad y cumplimiento LOPDGDD · Ensamblar el ETBD completo · Presentar y defender ante el Comité Técnico Municipal.</p>
+          <ul class="activities-list">
+            <li><span class="activity-num">→</span> Implementación del plan de seguridad MySQL: 3 roles (<code>admin_ecoverde</code>, <code>app_ecoverde</code>, <code>reporting_ecoverde</code>) con <code>GRANT/REVOKE</code>. Demostrar que <code>app_ecoverde</code> no puede hacer <code>DROP TABLE</code>.</li>
+            <li><span class="activity-num">→</span> Revisión LOPDGDD: campo <code>consentimiento_rgpd</code>, trigger de auditoría, procedimiento <code>sp_anonimizar_ciudadano</code> (derecho al olvido).</li>
+            <li><span class="activity-num">→</span> Ensamblado del ETBD completo: integrar entregables E1–E4 con el plan de seguridad.</li>
+            <li><span class="activity-num">→</span> Ensayo de presentación (15 min): demostración en vivo del script completo, procedimientos, triggers y consulta &lt; 100 ms.</li>
+            <li><span class="activity-num">→</span> <strong>Presentación ante el Comité Técnico Municipal</strong> (12 min + 8 min preguntas). Todos los miembros participan obligatoriamente.</li>
+            <li><span class="activity-num">→</span> Coevaluación entre pares: cada equipo cumplimenta la rúbrica del equipo que acaba de presentar.</li>
+          </ul>
+          <div class="entregable-tag">E5 (FINAL) — ETBD completo en PDF + Script SQL único ejecutable + Presentación (slides)</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+</div>
+
+<div class="section-divider"></div>
+
+<!-- RECURSOS -->
+<div id="recursos" class="section-alt">
+<div class="section">
+  <div class="section-label">Sección 04</div>
+  <h2 class="section-title"><span class="accent">Recursos</span> de Apoyo</h2>
+  <p>Los recursos se organizan por bloques. Los marcados como <strong style="color:#f87171">obligatorios</strong> deben consultarse antes de la sesión indicada.</p>
+
+  <h3 style="font-family:'Syne',sans-serif;font-size:1.05rem;color:var(--text);margin:2rem 0 1rem">📚 Documentación Técnica MySQL 8.0</h3>
+  <div class="resource-cards">
+    <a class="resource-card" href="https://dev.mysql.com/doc/refman/8.0/en/" target="_blank">
+      <div class="resource-card-header">
+        <span class="resource-type-badge badge-obligatorio">Obligatorio</span>
+        <h4>MySQL 8.0 Reference Manual</h4>
+      </div>
+      <p>Manual oficial completo en inglés. Referencia definitiva para todos los aspectos de MySQL 8.0.</p>
+      <span class="resource-url">dev.mysql.com/doc/refman/8.0/en/</span>
+    </a>
+    <a class="resource-card" href="https://dev.mysql.com/doc/workbench/en/" target="_blank">
+      <div class="resource-card-header">
+        <span class="resource-type-badge badge-obligatorio">Obligatorio</span>
+        <h4>MySQL Workbench Manual</h4>
+      </div>
+      <p>Guía de uso de MySQL Workbench para modelado EER y administración visual de bases de datos.</p>
+      <span class="resource-url">dev.mysql.com/doc/workbench/en/</span>
+    </a>
+    <a class="resource-card" href="https://dev.mysql.com/doc/refman/8.0/en/sql-data-definition-statements.html" target="_blank">
+      <div class="resource-card-header">
+        <span class="resource-type-badge badge-obligatorio">Obligatorio</span>
+        <h4>SQL DDL Reference</h4>
+      </div>
+      <p>Sintaxis completa de <code>CREATE</code>, <code>ALTER</code> y <code>DROP TABLE</code> en MySQL. Imprescindible para la sesión 3.</p>
+      <span class="resource-url">dev.mysql.com/doc/refman/8.0/en/...</span>
+    </a>
+    <a class="resource-card" href="https://dev.mysql.com/doc/refman/8.0/en/stored-objects.html" target="_blank">
+      <div class="resource-card-header">
+        <span class="resource-type-badge badge-obligatorio">Obligatorio</span>
+        <h4>Stored Procedures Guide</h4>
+      </div>
+      <p>Guía oficial de procedimientos almacenados y triggers en MySQL 8.0. Imprescindible para la sesión 4.</p>
+      <span class="resource-url">dev.mysql.com/doc/refman/8.0/en/stored-objects.html</span>
+    </a>
+    <a class="resource-card" href="https://dev.mysql.com/doc/refman/8.0/en/using-explain.html" target="_blank">
+      <div class="resource-card-header">
+        <span class="resource-type-badge badge-ampliacion">Ampliación</span>
+        <h4>MySQL EXPLAIN</h4>
+      </div>
+      <p>Uso de <code>EXPLAIN</code> y <code>EXPLAIN ANALYZE</code> para optimización de consultas. Clave para el SLA de 100 ms.</p>
+      <span class="resource-url">dev.mysql.com/doc/refman/8.0/en/using-explain.html</span>
+    </a>
+    <a class="resource-card" href="https://www.w3schools.com/sql/" target="_blank">
+      <div class="resource-card-header">
+        <span class="resource-type-badge badge-ampliacion">Ampliación</span>
+        <h4>W3Schools SQL</h4>
+      </div>
+      <p>Referencia rápida de SQL con ejemplos interactivos. Ideal para repasar sintaxis de forma ágil.</p>
+      <span class="resource-url">w3schools.com/sql/</span>
+    </a>
+  </div>
+
+  <h3 style="font-family:'Syne',sans-serif;font-size:1.05rem;color:var(--text);margin:2.5rem 0 1rem">🎨 Diseño de Bases de Datos</h3>
+  <div class="resource-cards">
+    <div class="resource-card" style="cursor:default">
+      <div class="resource-card-header">
+        <span class="resource-type-badge badge-obligatorio">Obligatorio</span>
+        <h4>Modelo E-R (Silberschatz)</h4>
+      </div>
+      <p>Capítulos 6 y 7 del libro <em>Fundamentos de Bases de Datos</em>. Disponible en la biblioteca del centro.</p>
+      <span class="resource-url">📖 Biblioteca del centro</span>
+    </div>
+    <a class="resource-card" href="https://www.guru99.com/database-normalization.html" target="_blank">
+      <div class="resource-card-header">
+        <span class="resource-type-badge badge-obligatorio">Obligatorio</span>
+        <h4>Normalización completa hasta BCFN</h4>
+      </div>
+      <p>Tutorial completo con ejemplos paso a paso desde 1FN hasta BCFN. Perfecto para la sesión 2.</p>
+      <span class="resource-url">guru99.com/database-normalization.html</span>
+    </a>
+    <a class="resource-card" href="https://www.lucidchart.com/pages/er-diagrams" target="_blank">
+      <div class="resource-card-header">
+        <span class="resource-type-badge badge-ampliacion">Ampliación</span>
+        <h4>Notación E-R — Lucidchart</h4>
+      </div>
+      <p>Guía visual de notación crow's foot y Chen con ejemplos interactivos y plantillas descargables.</p>
+      <span class="resource-url">lucidchart.com/pages/er-diagrams</span>
+    </a>
+    <a class="resource-card" href="https://www.databasestar.com/database-normalization/" target="_blank">
+      <div class="resource-card-header">
+        <span class="resource-type-badge badge-ampliacion">Ampliación</span>
+        <h4>DBNormalizationExamples</h4>
+      </div>
+      <p>Ejemplos resueltos de normalización 1FN, 2FN, 3FN con ejercicios prácticos para reforzar.</p>
+      <span class="resource-url">databasestar.com/database-normalization/</span>
+    </a>
+  </div>
+
+  <h3 style="font-family:'Syne',sans-serif;font-size:1.05rem;color:var(--text);margin:2.5rem 0 1rem">🛠️ Herramientas del Proyecto</h3>
+  <div class="resource-cards">
+    <a class="resource-card" href="https://dev.mysql.com/downloads/mysql/" target="_blank">
+      <div class="resource-card-header">
+        <span class="resource-type-badge badge-herramienta">Herramienta</span>
+        <h4>MySQL 8.0 Community</h4>
+      </div>
+      <p>SGBD principal del proyecto. Gratuito (open source). Instalación obligatoria en todos los equipos.</p>
+      <span class="resource-url">dev.mysql.com/downloads/mysql/</span>
+    </a>
+    <a class="resource-card" href="https://dev.mysql.com/downloads/workbench/" target="_blank">
+      <div class="resource-card-header">
+        <span class="resource-type-badge badge-herramienta">Herramienta</span>
+        <h4>MySQL Workbench 8.0</h4>
+      </div>
+      <p>Herramienta de modelado, diseño EER y administración visual de MySQL. 100% gratuita.</p>
+      <span class="resource-url">dev.mysql.com/downloads/workbench/</span>
+    </a>
+    <a class="resource-card" href="https://dbeaver.io/download/" target="_blank">
+      <div class="resource-card-header">
+        <span class="resource-type-badge badge-herramienta">Herramienta</span>
+        <h4>DBeaver Community</h4>
+      </div>
+      <p>Cliente SQL multiplataforma gratuito. Alternativa y complemento a Workbench.</p>
+      <span class="resource-url">dbeaver.io/download/</span>
+    </a>
+    <a class="resource-card" href="https://www.drawio.com/" target="_blank">
+      <div class="resource-card-header">
+        <span class="resource-type-badge badge-herramienta">Herramienta</span>
+        <h4>draw.io / diagrams.net</h4>
+      </div>
+      <p>Diagramas E-R online, gratuito. Alternativa a Workbench si hay problemas de instalación.</p>
+      <span class="resource-url">drawio.com</span>
+    </a>
+    <a class="resource-card" href="https://www.db-fiddle.com/" target="_blank">
+      <div class="resource-card-header">
+        <span class="resource-type-badge badge-herramienta">Herramienta</span>
+        <h4>DB Fiddle</h4>
+      </div>
+      <p>Entorno online para probar SQL MySQL sin instalación. Ideal para pruebas rápidas de consultas.</p>
+      <span class="resource-url">db-fiddle.com</span>
+    </a>
+    <a class="resource-card" href="https://github.com/" target="_blank">
+      <div class="resource-card-header">
+        <span class="resource-type-badge badge-herramienta">Herramienta</span>
+        <h4>Git / GitHub</h4>
+      </div>
+      <p>Control de versiones para los scripts SQL del proyecto. Recomendado para trabajo colaborativo.</p>
+      <span class="resource-url">github.com</span>
+    </a>
+  </div>
+
+  <div class="docente-resources">
+    <h3>📦 Materiales Proporcionados por el Docente</h3>
+    <ul class="docente-list">
+      <li>Dossier de Requisitos de EcoVerde (PDF, 10 páginas) con descripción detallada de los 7 servicios del barrio inteligente.</li>
+      <li>Plantilla del Expediente Técnico de Base de Datos (ETBD) en formato Word.</li>
+      <li>Checklist de normalización hasta 3FN (12 ítems de verificación).</li>
+      <li>Checklist de cumplimiento LOPDGDD para bases de datos municipales (10 ítems).</li>
+      <li>Guion de demostración en vivo para la sesión 5 (flujo de prueba del sistema).</li>
+      <li>Rúbrica de evaluación detallada y rúbrica de coevaluación entre pares.</li>
+    </ul>
+  </div>
+</div>
+</div>
+
+<div class="section-divider"></div>
+
+<!-- EVALUACIÓN -->
+<div id="evaluacion">
+<div class="section">
+  <div class="section-label">Sección 05</div>
+  <h2 class="section-title">Sistema de <span class="accent">Evaluación</span></h2>
+  <p>La evaluación es <strong>continua, formativa y sumativa</strong>. Se valoran los entregables parciales, la calidad técnica del producto final y las competencias transversales. Ponderación alineada con los criterios de evaluación del módulo.</p>
+
+  <!-- Pesos -->
+  <div class="eval-weights">
+    <div class="weight-card">
+      <div class="weight-percent">25%</div>
+      <div class="weight-label">Entregables<br>Parciales E1–E4</div>
+      <div class="weight-bar" style="width:25%"></div>
+    </div>
+    <div class="weight-card">
+      <div class="weight-percent">35%</div>
+      <div class="weight-label">ETBD Final<br>completo</div>
+      <div class="weight-bar" style="width:35%"></div>
+    </div>
+    <div class="weight-card">
+      <div class="weight-percent">25%</div>
+      <div class="weight-label">Script SQL<br>ejecutable</div>
+      <div class="weight-bar" style="width:25%"></div>
+    </div>
+    <div class="weight-card">
+      <div class="weight-percent">10%</div>
+      <div class="weight-label">Presentación<br>y Defensa oral</div>
+      <div class="weight-bar" style="width:10%"></div>
+    </div>
+    <div class="weight-card">
+      <div class="weight-percent">5%</div>
+      <div class="weight-label">Coevaluación<br>entre pares</div>
+      <div class="weight-bar" style="width:5%"></div>
+    </div>
+  </div>
+
+  <!-- Rúbrica 1 -->
+  <div class="rubric-section">
+    <h3 class="rubric-title">Rúbrica: Diseño E-R y Modelo Relacional (20% del ETBD)</h3>
+    <div class="rubric-wrap">
+      <table class="rubric-table">
+        <thead>
+          <tr>
+            <th>Criterio</th>
+            <th>Excelente (9–10)</th>
+            <th>Bien (7–8)</th>
+            <th>Suficiente (5–6)</th>
+            <th>Insuficiente (&lt;5)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Diagrama E-R</td>
+            <td>≥12 entidades, ≥20 relaciones, cardinalidades y participación correctas, notación consistente.</td>
+            <td>10–11 entidades, 18–19 relaciones, alguna cardinalidad imprecisa.</td>
+            <td>8–9 entidades, relaciones básicas identificadas, cardinalidades con errores.</td>
+            <td>&lt;8 entidades o diagrama incompleto.</td>
+          </tr>
+          <tr>
+            <td>Modelo Relacional</td>
+            <td>Transformación perfecta con todas las reglas aplicadas y documentadas. Integridad referencial completa.</td>
+            <td>Transformación correcta con alguna omisión menor. Integridad referencial cubierta.</td>
+            <td>Transformación básica, alguna tabla con error de claves.</td>
+            <td>Transformación incorrecta o incompleta.</td>
+          </tr>
+          <tr>
+            <td>Normalización 3FN</td>
+            <td>Todas las tablas en 3FN verificadas con dependencias funcionales documentadas.</td>
+            <td>La mayoría en 3FN, 1–2 tablas en 2FN justificadas.</td>
+            <td>La mayoría en 2FN, algunas en 1FN.</td>
+            <td>Tablas sin normalizar o documentación ausente.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Rúbrica 2 -->
+  <div class="rubric-section">
+    <h3 class="rubric-title">Rúbrica: Script SQL Completo (25%)</h3>
+    <div class="rubric-wrap">
+      <table class="rubric-table">
+        <thead>
+          <tr>
+            <th>Criterio</th>
+            <th>Excelente (9–10)</th>
+            <th>Bien (7–8)</th>
+            <th>Suficiente (5–6)</th>
+            <th>Insuficiente (&lt;5)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>DDL — Tablas y Restricciones</td>
+            <td>Todas las tablas con PK, FK, NOT NULL, CHECK e índices. Ejecuta sin errores en MySQL 8.0.</td>
+            <td>Tablas correctas con alguna restricción CHECK omitida.</td>
+            <td>Tablas básicas, FK parcialmente definidas.</td>
+            <td>Script con errores de sintaxis o sin restricciones de integridad.</td>
+          </tr>
+          <tr>
+            <td>DQL — Consultas</td>
+            <td>8 consultas con todos los tipos requeridos (JOIN, subconsultas, agregados, vistas). Resultados correctos.</td>
+            <td>6–7 consultas correctas, algún tipo omitido.</td>
+            <td>4–5 consultas, JOIN básicos solo.</td>
+            <td>&lt;4 consultas o resultados incorrectos.</td>
+          </tr>
+          <tr>
+            <td>Procedimientos y Triggers</td>
+            <td>2 procedimientos + 2 triggers funcionales con casos de prueba documentados.</td>
+            <td>3 de los 4 elementos funcionales.</td>
+            <td>2 de los 4 elementos funcionales.</td>
+            <td>&lt;2 elementos o no funcionales.</td>
+          </tr>
+          <tr>
+            <td>Seguridad y LOPDGDD</td>
+            <td>3 roles MySQL correctos + trigger auditoría + <code>sp_anonimizar</code> funcional + checklist completo.</td>
+            <td>Roles correctos + 2 de los otros elementos.</td>
+            <td>Roles básicos o elemento LOPDGDD básico.</td>
+            <td>Sin gestión de usuarios o sin consideración LOPDGDD.</td>
+          </tr>
+          <tr>
+            <td>Rendimiento</td>
+            <td>Las 3 consultas del panel &lt;100 ms demostrado con EXPLAIN ANALYZE + índices optimizados.</td>
+            <td>2 de 3 consultas &lt;100 ms.</td>
+            <td>Consultas analizadas aunque &gt;100 ms.</td>
+            <td>Sin análisis de rendimiento.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Rúbrica 3 -->
+  <div class="rubric-section">
+    <h3 class="rubric-title">Rúbrica: Presentación y Defensa (10%)</h3>
+    <div class="rubric-wrap">
+      <table class="rubric-table">
+        <thead>
+          <tr>
+            <th>Criterio</th>
+            <th>Excelente (9–10)</th>
+            <th>Bien (7–8)</th>
+            <th>Suficiente (5–6)</th>
+            <th>Insuficiente (&lt;5)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Claridad y rigor técnico</td>
+            <td>Exposición fluida, terminología SQL/diseño precisa, todos los miembros participan activamente.</td>
+            <td>Exposición clara, participación mayoritaria del equipo.</td>
+            <td>Comprensible, pero con lagunas técnicas.</td>
+            <td>Confusa o solo habla un miembro.</td>
+          </tr>
+          <tr>
+            <td>Defensa ante preguntas</td>
+            <td>Respuestas precisas a preguntas técnicas del comité con capacidad de autocrítica.</td>
+            <td>Respuestas correctas con alguna imprecisión.</td>
+            <td>Respuestas parciales ante preguntas complejas.</td>
+            <td>No responde o respuestas incorrectas.</td>
+          </tr>
+          <tr>
+            <td>Demo en vivo</td>
+            <td>Script SQL ejecutado completamente sin errores, panel del alcalde &lt;100 ms demostrado en tiempo real.</td>
+            <td>Demo funcional con ajuste menor en vivo.</td>
+            <td>Demo parcial o con error no crítico.</td>
+            <td>Demo no ejecutada o con errores críticos.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+</div>
+</div>
+
+<div class="section-divider"></div>
+
+<!-- CONCLUSIÓN -->
+<div id="conclusion" class="section-alt">
+<div class="section">
+  <div class="section-label">Sección 06</div>
+  <h2 class="section-title">Conclusión y <span class="accent">Reflexión</span></h2>
+
+  <div class="intro-grid">
+    <div>
+      <p>A lo largo de estas 5 sesiones habéis recorrido el <strong>ciclo completo de vida de una base de datos real</strong>: desde el análisis de los requisitos del cliente hasta la entrega de un sistema funcional, pasando por el modelado conceptual, la normalización, la implementación SQL y la demostración de rendimiento.</p>
+      <p>Todo ello bajo <strong>restricciones reales</strong> de presupuesto, tecnología y marco legal. Este proceso es exactamente el que realizaréis en vuestros primeros proyectos profesionales.</p>
+      <p>Las competencias desarrolladas son directamente transferibles a cualquier SGBD moderno: lo aprendido en <strong>MySQL 8.0</strong> se aplica con variaciones menores en PostgreSQL, Oracle, SQL Server o MariaDB. Los principios de normalización, integridad referencial y diseño eficiente son <strong>universales</strong>.</p>
+    </div>
+    <div class="intro-image-block" style="min-height:260px">
+      <img src="https://images.unsplash.com/photo-1504384308090-c894fdcc538d?w=800&q=80" alt="Equipo trabajando con tecnología">
+    </div>
+  </div>
+
+  <h3 style="font-family:'Syne',sans-serif;font-size:1.1rem;color:var(--text);margin:2rem 0 1rem">🚀 Roles profesionales que este módulo os abre</h3>
+  <div class="roles-futures">
+    <div class="future-role">
+      <span class="role-emoji">⚙️</span>
+      <div>
+        <h4>Desarrollador/a Backend</h4>
+        <p>Con conocimiento de bases de datos relacionales — el perfil más demandado del mercado TIC.</p>
+      </div>
+    </div>
+    <div class="future-role">
+      <span class="role-emoji">🗄️</span>
+      <div>
+        <h4>Administrador/a de BBDD (DBA Junior)</h4>
+        <p>En empresas con sistemas de gestión de datos de mediana y gran escala.</p>
+      </div>
+    </div>
+    <div class="future-role">
+      <span class="role-emoji">📊</span>
+      <div>
+        <h4>Analista de Datos</h4>
+        <p>Con capacidad de diseñar y consultar modelos de datos complejos en entornos reales.</p>
+      </div>
+    </div>
+    <div class="future-role">
+      <span class="role-emoji">🔄</span>
+      <div>
+        <h4>Consultor/a de Migración</h4>
+        <p>Optimización y migración de bases de datos legacy a sistemas modernos.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="reflection-block">
+    <h3>✏️ Diario de Aprendizaje — Reflexiones Finales</h3>
+    <p style="font-size:0.85rem;margin-bottom:1rem">Reflexionad individualmente sobre las siguientes preguntas antes de cerrar el proyecto:</p>
+    <ul class="reflection-questions">
+      <li>
+        <span class="q-icon">🤔</span>
+        <span>¿Qué decisión de normalización fue la más difícil de tomar y por qué?</span>
+      </li>
+      <li>
+        <span class="q-icon">💰</span>
+        <span>¿Cómo afectó la restricción del presupuesto de 2.000 € a vuestras elecciones tecnológicas?</span>
+      </li>
+      <li>
+        <span class="q-icon">👤</span>
+        <span>¿Qué diferencia hay entre diseñar una base de datos «ideal» en papel y una que debe funcionar realmente con datos de ciudadanos?</span>
+      </li>
+      <li>
+        <span class="q-icon">🔗</span>
+        <span>¿Cómo se relaciona lo aprendido con el módulo de Programación o con el módulo de Acceso a Datos que cursaréis en 2.º?</span>
+      </li>
+    </ul>
+  </div>
+
+  <div class="quote-finale">
+    <blockquote>
+      «Un buen diseño de base de datos es <span class="accent">invisible</span> cuando funciona bien
+      y <span style="color:#ef4444">devastador</span> cuando no existe.»
+    </blockquote>
+    <cite>— Principio fundamental del diseño de sistemas de información</cite>
+  </div>
+</div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-content">
+    <p style="color:var(--muted)">WebQuest · <strong style="color:var(--text)">EcoVerde SmartCity</strong> · Bases de Datos · 1.º DAM · Curso 2025–2026</p>
+    <div class="footer-tags">
+      <span class="footer-tag">MySQL 8.0</span>
+      <span class="footer-tag">SQL · DDL · DML · DQL</span>
+      <span class="footer-tag">Normalización 3FN</span>
+      <span class="footer-tag">LOPDGDD</span>
+      <span class="footer-tag">Real Decreto 450/2010</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+// Progress bar
+window.addEventListener('scroll', () => {
+  const scrollTop = document.documentElement.scrollTop;
+  const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+  const progress = (scrollTop / docHeight) * 100;
+  document.getElementById('progressFill').style.width = progress + '%';
+});
+
+// Smooth reveal on scroll
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.style.opacity = '1';
+      entry.target.style.transform = 'translateY(0)';
+    }
+  });
+}, { threshold: 0.08 });
+
+document.querySelectorAll('.session-card, .role-card, .resource-card, .deliverable-item, .req-item, .weight-card, .future-role').forEach(el => {
+  el.style.opacity = '0';
+  el.style.transform = 'translateY(16px)';
+  el.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+  observer.observe(el);
+});
+</script>
+
+</body>
+</html>
